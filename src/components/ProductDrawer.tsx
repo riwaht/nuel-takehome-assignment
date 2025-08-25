@@ -22,12 +22,12 @@ const ProductDrawer = ({ product, warehouses, onClose, onUpdate }: ProductDrawer
     <div className="fixed inset-0 overflow-hidden z-50">
       <div className="absolute inset-0 overflow-hidden">
         {/* Background overlay */}
-        <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
+        <div className="absolute inset-0 bg-brand-navy/80 dark:bg-brand-navy/90 transition-opacity" onClick={onClose} />
         
         {/* Drawer panel */}
         <section className="absolute inset-y-0 right-0 pl-1 sm:pl-10 max-w-full flex product-drawer">
-          <div className="relative w-screen max-w-sm sm:max-w-md product-drawer-content">
-            <div className="h-full flex flex-col bg-white shadow-xl overflow-y-auto rounded-l-2xl sm:rounded-l-none">
+          <div className="relative w-screen max-w-lg sm:max-w-xl product-drawer-content">
+            <div className="h-full flex flex-col bg-white dark:bg-brand-navy shadow-xl overflow-y-auto rounded-l-2xl sm:rounded-l-none">
               <DrawerHeader onClose={onClose} />
 
               <DrawerTabs activeTab={activeTab} onTabChange={setActiveTab} />

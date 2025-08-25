@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS, GET_WAREHOUSES, GET_KPIS } from './apollo/client';
+import { ThemeProvider } from './contexts/ThemeContext';
 import TopBar from './components/TopBar';
 import KPICards from './components/KPICards';
 import ChartSection from './components/ChartSection';
@@ -69,71 +70,75 @@ function App(): JSX.Element {
 
   if (productsError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-red-50">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Dashboard</h2>
-          <p className="text-red-500 mb-4">{productsError.message}</p>
-          <p className="text-sm text-gray-600">Make sure the GraphQL server is running on http://localhost:4000</p>
+      <ThemeProvider>
+        <div className="min-h-screen flex items-center justify-center bg-red-50 dark:bg-brand-navy">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">Error Loading Dashboard</h2>
+            <p className="text-red-500 dark:text-red-400 mb-4">{productsError.message}</p>
+            <p className="text-sm text-brand-grayText dark:text-brand-grayLight">Make sure the GraphQL server is running on http://localhost:4000</p>
+          </div>
         </div>
-      </div>
+      </ThemeProvider>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <TopBar 
-        selectedRange={selectedRange} 
-        onRangeChange={setSelectedRange} 
-      />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <div className="text-center mb-6 sm:mb-8 px-2">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            Daily Inventory Dashboard
-          </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            Monitor stock levels, demand forecasting, and warehouse operations
-          </p>
-        </div>
+    <ThemeProvider>
+      <div className="min-h-screen bg-gradient-to-br from-brand-grayLight via-blue-50 to-indigo-100 dark:from-brand-navy dark:via-brand-navy/95 dark:to-brand-navy/90">
+        <TopBar 
+          selectedRange={selectedRange} 
+          onRangeChange={setSelectedRange} 
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          <div className="text-center mb-6 sm:mb-8 px-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-brand-grayText dark:text-brand-grayLight mb-2">
+              Daily Inventory Dashboard
+            </h1>
+            <p className="text-base sm:text-lg text-brand-grayText/80 dark:text-brand-grayLight/80 max-w-2xl mx-auto">
+              Monitor stock levels, demand forecasting, and warehouse operations
+            </p>
+          </div>
 
-        <KPICards 
-          products={products} 
-          loading={productsLoading || kpisLoading} 
-        />
-        
-        <ChartSection 
-          kpis={kpis} 
-          loading={kpisLoading} 
-        />
-        
-        <div className="space-y-6">
-          <FiltersRow
-            filters={filters}
-            warehouses={warehouses}
-            onFilterChange={handleFilterChange}
-            loading={warehousesLoading}
+          <KPICards 
+            products={products} 
+            loading={productsLoading || kpisLoading} 
           />
           
-          <ProductsTable
-            products={paginatedProducts}
-            loading={productsLoading}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            onProductSelect={handleProductSelect}
+          <ChartSection 
+            kpis={kpis} 
+            loading={kpisLoading} 
           />
+          
+          <div className="space-y-6">
+            <FiltersRow
+              filters={filters}
+              warehouses={warehouses}
+              onFilterChange={handleFilterChange}
+              loading={warehousesLoading}
+            />
+            
+            <ProductsTable
+              products={paginatedProducts}
+              loading={productsLoading}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              onProductSelect={handleProductSelect}
+            />
+          </div>
         </div>
-      </div>
 
-      {selectedProduct && (
-        <ProductDrawer
-          product={selectedProduct}
-          warehouses={warehouses}
-          onClose={() => setSelectedProduct(null)}
-          onUpdate={handleProductUpdate}
-        />
-      )}
-    </div>
+        {selectedProduct && (
+          <ProductDrawer
+            product={selectedProduct}
+            warehouses={warehouses}
+            onClose={() => setSelectedProduct(null)}
+            onUpdate={handleProductUpdate}
+          />
+        )}
+      </div>
+    </ThemeProvider>
   );
 }
 

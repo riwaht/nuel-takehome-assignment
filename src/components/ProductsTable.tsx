@@ -27,43 +27,43 @@ const ProductsTable = ({
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300">
+    <div className="bg-white dark:bg-brand-navy rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 overflow-hidden transition-all duration-300">
       {/* Table Header */}
-      <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-        <h3 className="text-xl font-bold text-gray-900 mb-1">
+      <div className="px-8 py-6 border-b border-brand-grayMid/30 dark:border-brand-navy/50 bg-gradient-to-r from-brand-grayLight dark:from-brand-navy/80 to-white dark:to-brand-navy">
+        <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
           Products Inventory
         </h3>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
           {products.length > 0 ? `${(currentPage - 1) * 10 + 1}-${Math.min(currentPage * 10, products.length + (currentPage - 1) * 10)} of ${products.length + (currentPage - 1) * 10}` : '0'} items
         </p>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto min-h-[500px]">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-brand-grayMid/30 dark:divide-brand-navy/50">
+          <thead className="bg-brand-grayLight dark:bg-brand-navy/60">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 Product
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 SKU
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 Warehouse
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 Stock
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 Demand
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 Status
               </th>
             </tr>
           </thead>
-          <tbody className={`bg-white divide-y divide-gray-200 transition-opacity duration-300 ${loading ? 'opacity-60' : 'opacity-100'}`}>
+          <tbody className={`bg-white dark:bg-brand-navy divide-y divide-brand-grayMid/30 dark:divide-brand-navy/50 transition-opacity duration-300 ${loading ? 'opacity-60' : 'opacity-100'}`}>
             {products.length === 0 ? (
               <EmptyState />
             ) : (

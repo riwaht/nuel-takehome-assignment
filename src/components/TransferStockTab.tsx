@@ -56,15 +56,15 @@ const TransferStockTab = ({ product, warehouses, onUpdate, onTabChange }: Transf
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="text-lg font-medium text-gray-900">Transfer Stock</h4>
-        <p className="mt-1 text-sm text-gray-600">
+        <h4 className="text-lg font-medium text-brand-grayText dark:text-brand-grayLight">Transfer Stock</h4>
+        <p className="mt-1 text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
           Move stock from {product.warehouse} to another warehouse
         </p>
       </div>
 
       <form onSubmit={handleTransferStock} className="space-y-4">
         <div>
-          <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="quantity" className="block text-sm font-medium text-brand-grayText dark:text-brand-grayLight">
             Quantity to Transfer
           </label>
           <input
@@ -74,23 +74,23 @@ const TransferStockTab = ({ product, warehouses, onUpdate, onTabChange }: Transf
             max={product.stock}
             value={transferQty}
             onChange={handleQuantityChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full border border-brand-grayMid dark:border-brand-navy/60 rounded-md px-3 py-2 bg-white dark:bg-brand-navy text-brand-grayText dark:text-brand-grayLight focus:outline-none focus:ring-brand-blue focus:border-brand-blue"
             required
           />
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-brand-grayText/60 dark:text-brand-grayLight/60">
             Available stock: {product.stock.toLocaleString()}
           </p>
         </div>
 
         <div>
-          <label htmlFor="warehouse" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="warehouse" className="block text-sm font-medium text-brand-grayText dark:text-brand-grayLight">
             Target Warehouse
           </label>
           <select
             id="warehouse"
             value={targetWarehouse}
             onChange={handleWarehouseChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full border border-brand-grayMid dark:border-brand-navy/60 rounded-md px-3 py-2 bg-white dark:bg-brand-navy text-brand-grayText dark:text-brand-grayLight focus:outline-none focus:ring-brand-blue focus:border-brand-blue"
             required
           >
             <option value="">Select warehouse...</option>
@@ -103,11 +103,11 @@ const TransferStockTab = ({ product, warehouses, onUpdate, onTabChange }: Transf
         </div>
 
         {transferQty && targetWarehouse && (
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            <div className="text-sm text-gray-700">
+          <div className="bg-brand-gold/10 dark:bg-brand-gold/20 p-4 rounded-lg">
+            <div className="text-sm text-brand-grayText dark:text-brand-grayLight">
               <strong>Transfer:</strong> {parseInt(transferQty).toLocaleString()} units
             </div>
-            <div className="text-sm text-gray-700 mt-1">
+            <div className="text-sm text-brand-grayText dark:text-brand-grayLight mt-1">
               <strong>From:</strong> {product.warehouse} → <strong>To:</strong> {targetWarehouse}
             </div>
           </div>
@@ -116,7 +116,7 @@ const TransferStockTab = ({ product, warehouses, onUpdate, onTabChange }: Transf
         <button
           type="submit"
           disabled={transferring || !transferQty || !targetWarehouse}
-          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-brand-gold hover:bg-brand-gold/80 dark:hover:bg-brand-gold/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-gold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         >
           {transferring ? 'Transferring...' : 'Transfer Stock'}
         </button>

@@ -19,17 +19,17 @@ const DrawerTabs = ({ activeTab, onTabChange }: DrawerTabsProps): JSX.Element =>
   ];
 
   return (
-    <div className="border-b border-gray-200 bg-white sticky top-16 z-10">
-      <nav className="px-4 flex space-x-2 sm:space-x-6 sm:px-6 overflow-x-auto" aria-label="Tabs">
+    <div className="border-b border-brand-grayMid/30 dark:border-brand-navy/50 bg-white dark:bg-brand-navy sticky top-16 z-10">
+      <nav className="px-4 flex space-x-2 sm:space-x-6 sm:px-6" aria-label="Tabs">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={`${
               activeTab === tab.id
-                ? 'border-brand-500 text-brand-600 bg-brand-50'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-            } flex-shrink-0 whitespace-nowrap py-3 px-3 sm:px-4 border-b-2 font-semibold text-xs sm:text-sm flex items-center rounded-t-lg transition-all duration-200`}
+                ? 'border-brand-blue text-brand-blue bg-brand-blue/10 dark:bg-brand-blue/20'
+                : 'border-transparent text-brand-grayText/70 dark:text-brand-grayLight/70 hover:text-brand-grayText dark:hover:text-brand-grayLight hover:border-brand-grayMid/50 dark:hover:border-brand-navy/60 hover:bg-brand-grayLight/30 dark:hover:bg-brand-navy/30'
+            } flex-1 whitespace-nowrap py-3 px-2 sm:px-3 border-b-2 font-semibold text-xs sm:text-sm flex items-center justify-center rounded-t-lg transition-all duration-200`}
           >
             <tab.icon className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">{tab.name}</span>
