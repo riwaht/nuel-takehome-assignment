@@ -4,7 +4,71 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>SupplySight - Inventory Dashboard</title>
+    <script>
+      // Prevent flash of light mode and scroll jumping - runs before React loads
+      (function() {
+        try {
+          // 1. Apply theme immediately to prevent flash
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else if (savedTheme === 'light') {
+            document.documentElement.classList.remove('dark');
+          } else {
+            // No saved preference, check system preference
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              document.documentElement.classList.add('dark');
+              localStorage.setItem('theme', 'dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+              localStorage.setItem('theme', 'light');
+            }
+          }
+          
+          // 2. Disable browser's automatic scroll restoration to prevent jumping
+          if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+          }
+          
+          // 3. Handle smooth scroll restoration
+          const saveScrollPosition = () => {
+            sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+          };
+          
+          const restoreScrollPosition = () => {
+            try {
+              const savedScroll = sessionStorage.getItem('scrollPosition');
+              if (savedScroll && savedScroll !== '0') {
+                // Wait for content to load, then restore scroll smoothly
+                requestAnimationFrame(() => {
+                  setTimeout(() => {
+                    window.scrollTo({ 
+                      top: parseInt(savedScroll), 
+                      behavior: 'instant' // Instant to prevent jarring
+                    });
+                    // Clean up after successful restore
+                    sessionStorage.removeItem('scrollPosition');
+                  }, 50); // Small delay to ensure content is rendered
+                });
+              }
+            } catch (e) {
+              // Fail silently - scroll restoration is not critical
+            }
+          };
+          
+          // Save scroll position before page unload
+          window.addEventListener('beforeunload', saveScrollPosition);
+          
+          // Restore scroll position when page loads
+          restoreScrollPosition();
+          
+        } catch (e) {
+          // If localStorage is blocked or other error, do nothing
+          // Better to show light mode than crash
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

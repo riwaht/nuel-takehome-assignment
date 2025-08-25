@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { KPI } from '../types';
 
@@ -7,7 +8,19 @@ interface ChartSectionProps {
 }
 
 const ChartSection = ({ kpis, loading }: ChartSectionProps): JSX.Element => {
-  if (loading) {
+  // Memoize chart data to prevent recalculation on every render
+  const chartData = useMemo(() => 
+    kpis.map(kpi => ({
+      ...kpi,
+      date: new Date(kpi.date).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      })
+    })), [kpis]
+  );
+  
+  // Reserve space and show loading overlay instead of replacing content
+  if (loading && kpis.length === 0) {
     return (
       <div className="bg-white dark:bg-brand-navy rounded-lg shadow-sm border border-brand-grayMid/30 dark:border-brand-navy/50 p-6 mb-8">
         <div className="animate-pulse">
@@ -18,17 +31,14 @@ const ChartSection = ({ kpis, loading }: ChartSectionProps): JSX.Element => {
     );
   }
 
-  // Format data for the chart
-  const chartData = kpis.map(kpi => ({
-    ...kpi,
-    date: new Date(kpi.date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    })
-  }));
-
   return (
-    <div className="bg-white dark:bg-brand-navy rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white dark:bg-brand-navy rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 p-8 mb-8 hover:shadow-xl transition-shadow duration-300 relative">
+      {/* Loading overlay for smooth transitions */}
+      {loading && (
+        <div className="absolute inset-0 bg-white/60 dark:bg-brand-navy/60 flex items-center justify-center rounded-2xl z-10">
+          <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
@@ -110,4 +120,4 @@ const ChartSection = ({ kpis, loading }: ChartSectionProps): JSX.Element => {
   );
 };
 
-export default ChartSection;
+export default React.memo(ChartSection);

@@ -1,5 +1,5 @@
+import React, { useState, useMemo } from 'react';
 import { Calendar, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 
 interface TopBarProps {
@@ -10,13 +10,17 @@ interface TopBarProps {
 const TopBar = ({ selectedRange, onRangeChange }: TopBarProps): JSX.Element => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   
-  const ranges = [
+  // Memoize ranges array
+  const ranges = useMemo(() => [
     { value: '7d', label: '7 days' },
     { value: '14d', label: '14 days' },
     { value: '30d', label: '30 days' }
-  ];
+  ], []);
 
-  const selectedRangeLabel = ranges.find(r => r.value === selectedRange)?.label || '7 days';
+  const selectedRangeLabel = useMemo(
+    () => ranges.find(r => r.value === selectedRange)?.label || '7 days',
+    [ranges, selectedRange]
+  );
 
   const handleRangeSelect = (value: string): void => {
     onRangeChange(value);
@@ -97,4 +101,4 @@ const TopBar = ({ selectedRange, onRangeChange }: TopBarProps): JSX.Element => {
   );
 };
 
-export default TopBar;
+export default React.memo(TopBar);

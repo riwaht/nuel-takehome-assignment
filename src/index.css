@@ -8,17 +8,26 @@
     box-sizing: border-box;
   }
   
+  html {
+    /* Prevent white flash - set dark background by default and override with light */
+    background: #0f172a;
+  }
+  
+  html:not(.dark) {
+    background: #f8fafc;
+  }
+  
+  html.dark {
+    background: #0f172a;
+  }
+
   body {
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, theme('colors.brand.grayLight') 0%, theme('colors.brand.blue') 100%);
+    background: transparent;
     min-height: 100vh;
-  }
-
-  body.dark {
-    background: linear-gradient(135deg, theme('colors.brand.navy') 0%, theme('colors.brand.navy') 100%);
   }
 
   #root {

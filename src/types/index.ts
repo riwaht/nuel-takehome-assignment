@@ -20,10 +20,19 @@ export interface KPI {
   demand: number;
 }
 
+export type StatusFilter = "All" | "Healthy" | "Low" | "Critical";
+
 export interface Filters {
   search: string;
-  warehouse: string;
-  status: string;
+  warehouse: string | null;
+  status: StatusFilter;
+}
+
+export interface ProductsPage {
+  items: Product[];
+  totalCount: number;
+  offset: number;
+  limit: number;
 }
 
 export interface StatusInfo {

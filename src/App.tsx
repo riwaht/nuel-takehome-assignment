@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS, GET_WAREHOUSES, GET_KPIS } from './apollo/client';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -8,70 +8,108 @@ import ChartSection from './components/ChartSection';
 import FiltersRow from './components/FiltersRow';
 import ProductsTable from './components/ProductsTable';
 import ProductDrawer from './components/ProductDrawer';
-import { Product, Warehouse, KPI, Filters } from './types';
+import { Product, Warehouse, KPI, StatusFilter, ProductsPage } from './types';
+import useDebouncedValue from './hooks/useDebouncedValue';
 
 function App(): JSX.Element {
   const [selectedRange, setSelectedRange] = useState<string>('7d');
-  const [filters, setFilters] = useState<Filters>({
-    search: '',
-    warehouse: 'all',
-    status: 'all'
-  });
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [previousFilters, setPreviousFilters] = useState<Filters>(filters);
-
-  // GraphQL Queries
-  const { data: productsData, loading: productsLoading, error: productsError, refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
-    variables: {
-      search: filters.search || undefined,
-      warehouse: filters.warehouse === 'all' ? undefined : filters.warehouse,
-      status: filters.status === 'all' ? undefined : filters.status
-    }
-  });
-
-  const { data: warehousesData, loading: warehousesLoading } = useQuery(GET_WAREHOUSES);
+  const [isAppReady, setIsAppReady] = useState(false);
   
-  const { data: kpisData, loading: kpisLoading } = useQuery(GET_KPIS, {
-    variables: { range: selectedRange }
+  // Single source of truth for all filter state
+  const [rawSearch, setRawSearch] = useState('');
+  const search = useDebouncedValue(rawSearch, 250);
+  const [warehouse, setWarehouse] = useState<string | null>(null);
+  const [status, setStatus] = useState<StatusFilter>('All');
+  const [page, setPage] = useState(1);
+  
+  // Stable filter change callbacks that reset pagination
+  const onSearchChange = useCallback((v: string) => {
+    setPage(1);
+    setRawSearch(v);
+  }, []);
+  
+  const onWarehouseChange = useCallback((w: string | null) => {
+    setPage(1);
+    setWarehouse(w);
+  }, []);
+  
+  const onStatusChange = useCallback((s: StatusFilter) => {
+    setPage(1);
+    setStatus(s);
+  }, []);
+  
+  const onPageChange = useCallback((p: number) => setPage(p), []);
+
+  // Stable memoized query variables to prevent object identity changes
+  const productsVariables = useMemo(() => ({
+    search: search || null,
+    warehouse: warehouse || null,
+    status: status === 'All' ? null : status,
+    offset: (page - 1) * 10,
+    limit: 10
+  }), [search, warehouse, status, page]);
+  
+  const kpisVariables = useMemo(() => ({ range: selectedRange }), [selectedRange]);
+
+  // GraphQL Queries with stable fetch policies and previousData
+  const { data: productsData, previousData: previousProductsData, loading: productsLoading, error: productsError, refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
+    variables: productsVariables,
+    fetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true
   });
 
-  // Reset pagination only when filters change and data is loaded
-  useEffect(() => {
-    const filtersChanged = JSON.stringify(filters) !== JSON.stringify(previousFilters);
-    if (filtersChanged && !productsLoading) {
-      setCurrentPage(1);
-      setPreviousFilters(filters);
-    }
-  }, [filters, previousFilters, productsLoading]);
+  const { data: warehousesData, loading: warehousesLoading } = useQuery(GET_WAREHOUSES, {
+    fetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-first'
+  });
+  
+  const { data: kpisData, previousData: previousKpisData, loading: kpisLoading } = useQuery(GET_KPIS, {
+    variables: kpisVariables,
+    fetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true
+  });
 
-  const handleFilterChange = (newFilters: Partial<Filters>): void => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
-    // Don't reset page immediately - let the effect handle it smoothly
-  };
-
-  const handleProductSelect = (product: Product): void => {
+  // Stable callbacks for child components
+  const handleProductSelect = useCallback((product: Product) => {
     setSelectedProduct(product);
-  };
+  }, []);
 
-  const handleProductUpdate = (): void => {
-    refetchProducts(); // Refresh products data after mutation
-  };
+  const handleProductUpdate = useCallback(() => {
+    refetchProducts();
+  }, [refetchProducts]);
+  
+  const handleRangeChange = useCallback((range: string) => {
+    setSelectedRange(range);
+  }, []);
+  
+  const handleCloseDrawer = useCallback(() => {
+    setSelectedProduct(null);
+  }, []);
 
-  const products: Product[] = productsData?.products || [];
-  const warehouses: Warehouse[] = warehousesData?.warehouses || [];
-  const kpis: KPI[] = kpisData?.kpis || [];
+  // Prevent layout shift on initial load
+  useEffect(() => {
+    // Mark app as ready after initial render
+    const timer = setTimeout(() => setIsAppReady(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // Calculate paginated products
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  // Use previousData as fallback to prevent visual bounce
+  const productsPage: ProductsPage | undefined = productsData?.products ?? previousProductsData?.products;
+  const products: Product[] = productsPage?.items ?? [];
+  const totalCount = productsPage?.totalCount ?? 0;
+  
+  const warehouses: Warehouse[] = warehousesData?.warehouses ?? [];
+  const kpis: KPI[] = kpisData?.kpis ?? previousKpisData?.kpis ?? [];
+
+  const totalPages = Math.ceil(totalCount / 10);
 
   if (productsError) {
     return (
       <ThemeProvider>
-        <div className="min-h-screen flex items-center justify-center bg-red-50 dark:bg-brand-navy">
+        <div className="min-h-screen flex items-center justify-center bg-red-50 dark:bg-transparent">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">Error Loading Dashboard</h2>
             <p className="text-red-500 dark:text-red-400 mb-4">{productsError.message}</p>
@@ -84,10 +122,12 @@ function App(): JSX.Element {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gradient-to-br from-brand-grayLight via-blue-50 to-indigo-100 dark:from-brand-navy dark:via-brand-navy/95 dark:to-brand-navy/90">
+      <div className={`min-h-screen transition-opacity duration-300 ${
+        isAppReady ? 'opacity-100' : 'opacity-0'
+      }`}>
         <TopBar 
           selectedRange={selectedRange} 
-          onRangeChange={setSelectedRange} 
+          onRangeChange={handleRangeChange} 
         />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -112,18 +152,23 @@ function App(): JSX.Element {
           
           <div className="space-y-6">
             <FiltersRow
-              filters={filters}
+              search={rawSearch}
+              warehouse={warehouse}
+              status={status}
               warehouses={warehouses}
-              onFilterChange={handleFilterChange}
+              onSearchChange={onSearchChange}
+              onWarehouseChange={onWarehouseChange}
+              onStatusChange={onStatusChange}
               loading={warehousesLoading}
             />
             
             <ProductsTable
-              products={paginatedProducts}
+              products={products}
               loading={productsLoading}
-              currentPage={currentPage}
+              currentPage={page}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
+              totalCount={totalCount}
+              onPageChange={onPageChange}
               onProductSelect={handleProductSelect}
             />
           </div>
@@ -133,7 +178,7 @@ function App(): JSX.Element {
           <ProductDrawer
             product={selectedProduct}
             warehouses={warehouses}
-            onClose={() => setSelectedProduct(null)}
+            onClose={handleCloseDrawer}
             onUpdate={handleProductUpdate}
           />
         )}

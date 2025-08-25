@@ -23,17 +23,11 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps): JSX.Element => {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Check if there's a saved theme preference
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme) {
-      return savedTheme;
-    }
-    
-    // Check system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // Read the theme that was already applied by the inline script
+    // This ensures consistency and avoids duplicate detection
+    if (document.documentElement.classList.contains('dark')) {
       return 'dark';
     }
-    
     return 'light';
   });
 

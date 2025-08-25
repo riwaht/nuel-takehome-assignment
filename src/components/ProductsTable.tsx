@@ -1,3 +1,4 @@
+import React from 'react';
 import { Product } from '../types';
 import ProductRow from './ProductRow';
 import EmptyState from './EmptyState';
@@ -11,6 +12,7 @@ interface ProductsTableProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onProductSelect: (product: Product) => void;
+  totalCount?: number;
 }
 
 const ProductsTable = ({ 
@@ -19,10 +21,13 @@ const ProductsTable = ({
   currentPage, 
   totalPages, 
   onPageChange, 
-  onProductSelect 
+  onProductSelect,
+  totalCount = 0
 }: ProductsTableProps): JSX.Element => {
-  // Don't show skeleton if we already have products (for search updates)
-  if (loading && products.length === 0) {
+  // Only show full skeleton for initial load - when we have no data at all
+  const shouldShowSkeleton = loading && products.length === 0 && totalCount === 0;
+  
+  if (shouldShowSkeleton) {
     return <TableLoadingSkeleton />;
   }
 
@@ -33,9 +38,18 @@ const ProductsTable = ({
         <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
           Products Inventory
         </h3>
-        <p className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
-          {products.length > 0 ? `${(currentPage - 1) * 10 + 1}-${Math.min(currentPage * 10, products.length + (currentPage - 1) * 10)} of ${products.length + (currentPage - 1) * 10}` : '0'} items
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
+            {totalCount > 0 ? `${(currentPage - 1) * 10 + 1}-${Math.min(currentPage * 10, totalCount)} of ${totalCount}` : '0'} items
+          </p>
+          {/* Show subtle loading indicator only when we have data but are refreshing */}
+          {loading && products.length > 0 && (
+            <div className="flex items-center space-x-2 text-xs text-brand-grayText/60 dark:text-brand-grayLight/60">
+              <div className="w-3 h-3 border-2 border-brand-blue/30 border-t-brand-blue rounded-full animate-spin"></div>
+              <span>Updating...</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Table */}
@@ -63,7 +77,7 @@ const ProductsTable = ({
               </th>
             </tr>
           </thead>
-          <tbody className={`bg-white dark:bg-brand-navy divide-y divide-brand-grayMid/30 dark:divide-brand-navy/50 transition-opacity duration-300 ${loading ? 'opacity-60' : 'opacity-100'}`}>
+          <tbody className="bg-white dark:bg-brand-navy divide-y divide-brand-grayMid/30 dark:divide-brand-navy/50">
             {products.length === 0 ? (
               <EmptyState />
             ) : (
@@ -88,4 +102,4 @@ const ProductsTable = ({
   );
 };
 
-export default ProductsTable;
+export default React.memo(ProductsTable);

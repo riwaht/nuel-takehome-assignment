@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo } from 'react';
 import { Product, StatusInfo } from '../types';
 
 interface ProductRowProps {
@@ -6,7 +7,13 @@ interface ProductRowProps {
 }
 
 const ProductRow = ({ product, onProductSelect }: ProductRowProps): JSX.Element => {
-  const getStatusInfo = (product: Product): StatusInfo => {
+  // Stable click handler
+  const handleClick = useCallback(() => {
+    onProductSelect(product);
+  }, [onProductSelect, product]);
+
+  // Memoized status info calculation
+  const statusInfo = useMemo((): StatusInfo => {
     if (product.stock > product.demand) {
       return {
         status: 'healthy',
@@ -29,14 +36,12 @@ const ProductRow = ({ product, onProductSelect }: ProductRowProps): JSX.Element 
         rowColor: 'bg-red-50/50 dark:bg-red-900/10'
       };
     }
-  };
-
-  const statusInfo = getStatusInfo(product);
+  }, [product.stock, product.demand]);
 
   return (
     <tr
       key={product.id}
-      onClick={() => onProductSelect(product)}
+      onClick={handleClick}
       className={`hover:bg-brand-grayLight/30 dark:hover:bg-brand-navy/30 cursor-pointer transition-colors duration-200 ${statusInfo.rowColor}`}
     >
       <td className="px-6 py-4 whitespace-nowrap">
@@ -73,4 +78,4 @@ const ProductRow = ({ product, onProductSelect }: ProductRowProps): JSX.Element 
   );
 };
 
-export default ProductRow;
+export default React.memo(ProductRow);

@@ -15,14 +15,19 @@ export const client = new ApolloClient({
 
 // GraphQL Queries
 export const GET_PRODUCTS = gql`
-  query GetProducts($search: String, $status: String, $warehouse: String) {
-    products(search: $search, status: $status, warehouse: $warehouse) {
-      id
-      name
-      sku
-      warehouse
-      stock
-      demand
+  query GetProducts($search: String, $status: String, $warehouse: String, $offset: Int, $limit: Int) {
+    products(search: $search, status: $status, warehouse: $warehouse, offset: $offset, limit: $limit) {
+      items {
+        id
+        name
+        sku
+        warehouse
+        stock
+        demand
+      }
+      totalCount
+      offset
+      limit
     }
   }
 `;

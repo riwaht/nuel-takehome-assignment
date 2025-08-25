@@ -1,3 +1,4 @@
+import React from 'react';
 import { X } from 'lucide-react';
 
 interface DrawerHeaderProps {
@@ -21,4 +22,4 @@ const DrawerHeader = ({ onClose }: DrawerHeaderProps): JSX.Element => {
   );
 };
 
-export default DrawerHeader;
+export default React.memo(DrawerHeader);

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const EmptyState = (): JSX.Element => {
   return (
     <tr>
@@ -14,4 +16,4 @@ const EmptyState = (): JSX.Element => {
   );
 };
 
-export default EmptyState;
+export default React.memo(EmptyState);

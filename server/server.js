@@ -19,6 +19,13 @@ const typeDefs = `
     demand: Int!
   }
 
+  type ProductsPage {
+    items: [Product!]!
+    totalCount: Int!
+    offset: Int!
+    limit: Int!
+  }
+
   type KPI {
     date: String!
     stock: Int!
@@ -26,7 +33,7 @@ const typeDefs = `
   }
 
   type Query {
-    products(search: String, status: String, warehouse: String): [Product!]!
+    products(search: String, status: String, warehouse: String, offset: Int = 0, limit: Int = 10): ProductsPage!
     warehouses: [Warehouse!]!
     kpis(range: String!): [KPI!]!
   }
@@ -89,7 +96,7 @@ const generateKPIs = (range) => {
 // Resolvers
 const resolvers = {
   Query: {
-    products: (_, { search, status, warehouse }) => {
+    products: (_, { search, status, warehouse, offset = 0, limit = 10 }) => {
       let filteredProducts = [...products];
       
       // Filter by search
@@ -108,15 +115,23 @@ const resolvers = {
       }
       
       // Filter by status
-      if (status && status !== 'all') {
+      if (status && status !== 'All') {
         filteredProducts = filteredProducts.filter(product => {
-          const productStatus = product.stock > product.demand ? 'healthy' : 
-                               product.stock === product.demand ? 'low' : 'critical';
+          const productStatus = product.stock > product.demand ? 'Healthy' : 
+                               product.stock === product.demand ? 'Low' : 'Critical';
           return productStatus === status;
         });
       }
       
-      return filteredProducts;
+      const totalCount = filteredProducts.length;
+      const items = filteredProducts.slice(offset, offset + limit);
+      
+      return {
+        items,
+        totalCount,
+        offset,
+        limit
+      };
     },
     
     warehouses: () => warehouses,

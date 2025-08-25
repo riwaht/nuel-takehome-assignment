@@ -1,3 +1,4 @@
+import React from 'react';
 import { TrendingUp, Package, Target } from 'lucide-react';
 import { Product } from '../types';
 
@@ -91,4 +92,4 @@ const KPICards = ({ products, loading }: KPICardsProps): JSX.Element => {
   );
 };
 
-export default KPICards;
+export default React.memo(KPICards);
