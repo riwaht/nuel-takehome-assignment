@@ -41,10 +41,16 @@ const ChartSection = ({ kpis, loading }: ChartSectionProps): JSX.Element => {
       )}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
+          <h3 
+            id="chart-title" 
+            className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1"
+          >
             Stock vs Demand Trend
           </h3>
-          <p className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
+          <p 
+            id="chart-description" 
+            className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70"
+          >
             Track inventory levels and demand patterns over time
           </p>
         </div>
@@ -60,9 +66,18 @@ const ChartSection = ({ kpis, loading }: ChartSectionProps): JSX.Element => {
         </div>
       </div>
       
-      <div className="w-full h-80">
+      <div 
+        className="w-full h-80"
+        role="img"
+        aria-labelledby="chart-title"
+        aria-describedby="chart-description"
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+          <LineChart 
+            data={chartData} 
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            title="Stock vs Demand Trend Chart"
+          >
             <defs>
               <linearGradient id="stockGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#4A6FE3" stopOpacity={0.3}/>

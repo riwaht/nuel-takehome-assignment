@@ -34,7 +34,7 @@ const ProductsTable = ({
   return (
     <div className="bg-white dark:bg-brand-navy rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 overflow-hidden transition-all duration-300">
       {/* Table Header */}
-      <div className="px-8 py-6 border-b border-brand-grayMid/30 dark:border-brand-navy/50 bg-gradient-to-r from-brand-grayLight dark:from-brand-navy/80 to-white dark:to-brand-navy">
+      <div className="px-8 py-6 border-b border-brand-grayMid/30 dark:border-brand-grayLight/20 bg-gradient-to-r from-brand-grayLight dark:from-brand-navy/80 to-white dark:to-brand-navy">
         <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
           Products Inventory
         </h3>
@@ -54,8 +54,8 @@ const ProductsTable = ({
 
       {/* Table */}
       <div className="overflow-x-auto min-h-[500px]">
-        <table className="min-w-full divide-y divide-brand-grayMid/30 dark:divide-brand-navy/50">
-          <thead className="bg-brand-grayLight dark:bg-brand-navy/60">
+        <table className="min-w-full divide-y divide-brand-grayMid/30 dark:divide-brand-grayLight/20">
+          <thead className="bg-brand-grayLight dark:bg-brand-navy/60 border-b border-brand-grayMid/20 dark:border-brand-grayLight/10">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wider">
                 Product
@@ -77,15 +77,16 @@ const ProductsTable = ({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-brand-navy divide-y divide-brand-grayMid/30 dark:divide-brand-navy/50">
+          <tbody className="bg-white dark:bg-brand-navy divide-y divide-brand-grayMid/30 dark:divide-brand-grayLight/15">
             {products.length === 0 ? (
               <EmptyState />
             ) : (
-              products.map((product) => (
+              products.map((product, index) => (
                 <ProductRow 
                   key={product.id}
                   product={product}
                   onProductSelect={onProductSelect}
+                  index={index}
                 />
               ))
             )}

@@ -4,12 +4,21 @@ import { Product, StatusInfo } from '../types';
 interface ProductRowProps {
   product: Product;
   onProductSelect: (product: Product) => void;
+  index: number;
 }
 
-const ProductRow = ({ product, onProductSelect }: ProductRowProps): JSX.Element => {
+const ProductRow = ({ product, onProductSelect, index }: ProductRowProps): JSX.Element => {
   // Stable click handler
   const handleClick = useCallback(() => {
     onProductSelect(product);
+  }, [onProductSelect, product]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onProductSelect(product);
+    }
   }, [onProductSelect, product]);
 
   // Memoized status info calculation
@@ -33,16 +42,29 @@ const ProductRow = ({ product, onProductSelect }: ProductRowProps): JSX.Element 
         status: 'critical',
         label: 'Critical',
         color: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400',
-        rowColor: 'bg-red-50/50 dark:bg-red-900/10'
+        rowColor: 'bg-red-50/70 dark:bg-red-900/30'
       };
     }
   }, [product.stock, product.demand]);
+
+  // Alternating row background for better visual separation in dark mode
+  // Critical rows override alternating pattern
+  const isEven = index % 2 === 0;
+  const alternatingBg = statusInfo.status === 'critical' 
+    ? '' // Let critical tint take precedence
+    : isEven 
+      ? 'bg-white dark:bg-brand-navy' 
+      : 'bg-brand-grayLight/20 dark:bg-brand-navy/40';
 
   return (
     <tr
       key={product.id}
       onClick={handleClick}
-      className={`hover:bg-brand-grayLight/30 dark:hover:bg-brand-navy/30 cursor-pointer transition-colors duration-200 ${statusInfo.rowColor}`}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`View details for ${product.name}`}
+      className={`${alternatingBg} ${statusInfo.rowColor} hover:bg-brand-grayLight/50 dark:hover:bg-brand-grayLight/10 focus:bg-brand-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-inset cursor-pointer transition-colors duration-200 border-b border-brand-grayMid/20 dark:border-brand-grayLight/10`}
     >
       <td className="px-6 py-4 whitespace-nowrap">
         <div>
@@ -50,11 +72,21 @@ const ProductRow = ({ product, onProductSelect }: ProductRowProps): JSX.Element 
           <div className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">{product.id}</div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-brand-grayText dark:text-brand-grayLight">{product.sku}</div>
+      <td className="px-6 py-4 whitespace-nowrap w-32">
+        <div 
+          className="text-sm text-brand-grayText dark:text-brand-grayLight truncate"
+          title={product.sku}
+        >
+          {product.sku}
+        </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-brand-grayText dark:text-brand-grayLight">{product.warehouse}</div>
+      <td className="px-6 py-4 whitespace-nowrap w-24">
+        <div 
+          className="text-sm text-brand-grayText dark:text-brand-grayLight truncate"
+          title={product.warehouse}
+        >
+          {product.warehouse}
+        </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-sm font-medium text-brand-grayText dark:text-brand-grayLight">{product.stock.toLocaleString()}</div>

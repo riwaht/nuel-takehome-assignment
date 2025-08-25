@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Product, Warehouse } from '../types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import DrawerHeader from './DrawerHeader';
 import DrawerTabs from './DrawerTabs';
 import ProductDetailsTab from './ProductDetailsTab';
@@ -19,6 +20,9 @@ const ProductDrawer = ({ product, warehouses, onClose, onUpdate }: ProductDrawer
   const [shouldMount, setShouldMount] = useState(true);
   
   const currentWarehouse = warehouses.find(w => w.code === product.warehouse);
+  
+  // Focus trap for drawer accessibility
+  const focusTrapRef = useFocusTrap(isVisible);
 
   // Handle smooth close animation
   const handleClose = useCallback(() => {
@@ -69,7 +73,19 @@ const ProductDrawer = ({ product, warehouses, onClose, onUpdate }: ProductDrawer
               isVisible ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
-            <div className="h-full flex flex-col bg-white dark:bg-brand-navy shadow-xl overflow-y-auto rounded-l-2xl sm:rounded-l-none">
+            <div 
+              ref={focusTrapRef}
+              className="h-full flex flex-col bg-white dark:bg-brand-navy shadow-xl overflow-y-auto rounded-l-2xl sm:rounded-l-none"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="drawer-title"
+              aria-describedby="drawer-description"
+            >
+              {/* Hidden description for screen readers */}
+              <span id="drawer-description" className="sr-only">
+                Product details panel for {product.name}. Use tab to navigate between form elements and sections.
+              </span>
+              
               <DrawerHeader onClose={handleClose} />
 
               <DrawerTabs activeTab={activeTab} onTabChange={setActiveTab} />

@@ -2,12 +2,14 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS, GET_WAREHOUSES, GET_KPIS } from './apollo/client';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ToastProvider } from './contexts/ToastContext';
 import TopBar from './components/TopBar';
 import KPICards from './components/KPICards';
 import ChartSection from './components/ChartSection';
 import FiltersRow from './components/FiltersRow';
 import ProductsTable from './components/ProductsTable';
 import ProductDrawer from './components/ProductDrawer';
+import ToastContainer from './components/ToastContainer';
 import { Product, Warehouse, KPI, StatusFilter, ProductsPage } from './types';
 import useDebouncedValue from './hooks/useDebouncedValue';
 
@@ -109,80 +111,86 @@ function App(): JSX.Element {
   if (productsError) {
     return (
       <ThemeProvider>
-        <div className="min-h-screen flex items-center justify-center bg-red-50 dark:bg-transparent">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">Error Loading Dashboard</h2>
-            <p className="text-red-500 dark:text-red-400 mb-4">{productsError.message}</p>
-            <p className="text-sm text-brand-grayText dark:text-brand-grayLight">Make sure the GraphQL server is running on http://localhost:4000</p>
+        <ToastProvider>
+          <div className="min-h-screen flex items-center justify-center bg-red-50 dark:bg-transparent">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">Error Loading Dashboard</h2>
+              <p className="text-red-500 dark:text-red-400 mb-4">{productsError.message}</p>
+              <p className="text-sm text-brand-grayText dark:text-brand-grayLight">Make sure the GraphQL server is running on http://localhost:4000</p>
+            </div>
           </div>
-        </div>
+          <ToastContainer />
+        </ToastProvider>
       </ThemeProvider>
     );
   }
 
   return (
     <ThemeProvider>
-      <div className={`min-h-screen transition-opacity duration-300 ${
-        isAppReady ? 'opacity-100' : 'opacity-0'
-      }`}>
-        <TopBar 
-          selectedRange={selectedRange} 
-          onRangeChange={handleRangeChange} 
-        />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-          <div className="text-center mb-6 sm:mb-8 px-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-brand-grayText dark:text-brand-grayLight mb-2">
-              Daily Inventory Dashboard
-            </h1>
-            <p className="text-base sm:text-lg text-brand-grayText/80 dark:text-brand-grayLight/80 max-w-2xl mx-auto">
-              Monitor stock levels, demand forecasting, and warehouse operations
-            </p>
-          </div>
+      <ToastProvider>
+        <div className={`min-h-screen transition-opacity duration-300 ${
+          isAppReady ? 'opacity-100' : 'opacity-0'
+        }`}>
+          <TopBar 
+            selectedRange={selectedRange} 
+            onRangeChange={handleRangeChange} 
+          />
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <div className="text-center mb-6 sm:mb-8 px-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-brand-grayText dark:text-brand-grayLight mb-2">
+                Daily Inventory Dashboard
+              </h1>
+              <p className="text-base sm:text-lg text-brand-grayText/80 dark:text-brand-grayLight/80 max-w-2xl mx-auto">
+                Monitor stock levels, demand forecasting, and warehouse operations
+              </p>
+            </div>
 
-          <KPICards 
-            products={products} 
-            loading={productsLoading || kpisLoading} 
-          />
-          
-          <ChartSection 
-            kpis={kpis} 
-            loading={kpisLoading} 
-          />
-          
-          <div className="space-y-6">
-            <FiltersRow
-              search={rawSearch}
-              warehouse={warehouse}
-              status={status}
-              warehouses={warehouses}
-              onSearchChange={onSearchChange}
-              onWarehouseChange={onWarehouseChange}
-              onStatusChange={onStatusChange}
-              loading={warehousesLoading}
+            <KPICards 
+              products={products} 
+              loading={productsLoading || kpisLoading} 
             />
             
-            <ProductsTable
-              products={products}
-              loading={productsLoading}
-              currentPage={page}
-              totalPages={totalPages}
-              totalCount={totalCount}
-              onPageChange={onPageChange}
-              onProductSelect={handleProductSelect}
+            <ChartSection 
+              kpis={kpis} 
+              loading={kpisLoading} 
             />
+            
+            <div className="space-y-6">
+              <FiltersRow
+                search={rawSearch}
+                warehouse={warehouse}
+                status={status}
+                warehouses={warehouses}
+                onSearchChange={onSearchChange}
+                onWarehouseChange={onWarehouseChange}
+                onStatusChange={onStatusChange}
+                loading={warehousesLoading}
+              />
+              
+              <ProductsTable
+                products={products}
+                loading={productsLoading}
+                currentPage={page}
+                totalPages={totalPages}
+                totalCount={totalCount}
+                onPageChange={onPageChange}
+                onProductSelect={handleProductSelect}
+              />
+            </div>
           </div>
-        </div>
 
-        {selectedProduct && (
-          <ProductDrawer
-            product={selectedProduct}
-            warehouses={warehouses}
-            onClose={handleCloseDrawer}
-            onUpdate={handleProductUpdate}
-          />
-        )}
-      </div>
+          {selectedProduct && (
+            <ProductDrawer
+              product={selectedProduct}
+              warehouses={warehouses}
+              onClose={handleCloseDrawer}
+              onUpdate={handleProductUpdate}
+            />
+          )}
+        </div>
+        <ToastContainer />
+      </ToastProvider>
     </ThemeProvider>
   );
 }

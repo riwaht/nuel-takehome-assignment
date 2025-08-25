@@ -52,7 +52,7 @@ const FiltersRow = ({
   };
 
   return (
-    <div className="bg-white dark:bg-brand-navy rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 p-6 mb-6 hover:shadow-xl transition-all duration-300">
+    <div className="bg-white/95 dark:bg-brand-navy/95 backdrop-blur-sm rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 p-6 mb-6 hover:shadow-xl transition-all duration-300 sticky top-16 z-40">
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
         {/* Search Input */}
         <div className="relative group flex-1 sm:flex-none sm:w-80 lg:w-96">
@@ -60,12 +60,25 @@ const FiltersRow = ({
             <Search className="h-5 w-5 text-brand-grayText/50 dark:text-brand-grayLight/50 group-focus-within:text-brand-blue transition-colors duration-200" />
           </div>
           <input
-            type="text"
+            type="search"
             placeholder="Search products by name, SKU, or ID..."
             value={search}
             onChange={handleSearchChange}
-            className="input-field w-full pl-11 py-3 pr-4 text-sm bg-brand-grayLight/50 dark:bg-brand-navy/30 hover:bg-brand-grayLight dark:hover:bg-brand-navy/60 focus:bg-white dark:focus:bg-brand-navy placeholder:text-brand-grayText/50 dark:placeholder:text-brand-grayLight/50 transition-colors duration-200"
+            aria-label="Search products by name, SKU, or product ID"
+            className="input-field w-full pl-11 py-3 pr-12 text-sm bg-brand-grayLight/50 dark:bg-brand-navy/30 hover:bg-brand-grayLight dark:hover:bg-brand-navy/60 focus:bg-white dark:focus:bg-brand-navy placeholder:text-brand-grayText/50 dark:placeholder:text-brand-grayLight/50 transition-colors duration-200"
           />
+          {search && (
+            <button
+              onClick={() => onSearchChange('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-brand-grayText/50 hover:text-brand-grayText dark:text-brand-grayLight/50 dark:hover:text-brand-grayLight transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-blue rounded-full"
+              aria-label="Clear search"
+              title="Clear search"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Warehouse Dropdown */}

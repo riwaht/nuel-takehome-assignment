@@ -2,7 +2,7 @@ import React from 'react';
 
 const EmptyState = (): JSX.Element => {
   return (
-    <tr>
+    <tr className="bg-white dark:bg-brand-navy border-b border-brand-grayMid/20 dark:border-brand-grayLight/10">
       <td colSpan={6} className="px-6 py-12 text-center text-brand-grayText/70 dark:text-brand-grayLight/70">
         <div className="text-center">
           <svg className="mx-auto h-12 w-12 text-brand-grayText/50 dark:text-brand-grayLight/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
