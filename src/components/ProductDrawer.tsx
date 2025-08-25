@@ -31,13 +31,13 @@ const ProductDrawer = ({ product, warehouses, onClose, onUpdate }: ProductDrawer
     setTimeout(() => {
       setShouldMount(false);
       onClose();
-    }, 300);
+    }, 400);
   }, [onClose]);
 
   // Animate in on mount
   useEffect(() => {
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(() => setIsVisible(true), 10);
+    // Smooth delay to ensure DOM is ready and create a natural opening feel
+    const timer = setTimeout(() => setIsVisible(true), 50);
     return () => clearTimeout(timer);
   }, []);
 
@@ -60,7 +60,7 @@ const ProductDrawer = ({ product, warehouses, onClose, onUpdate }: ProductDrawer
       <div className="absolute inset-0 overflow-hidden">
         {/* Background overlay with fade animation */}
         <div 
-          className={`absolute inset-0 bg-brand-navy/80 dark:bg-brand-navy/90 transition-opacity duration-300 ease-in-out ${
+          className={`absolute inset-0 bg-brand-navy/80 dark:bg-brand-navy/90 transition-opacity duration-400 ease-out ${
             isVisible ? 'opacity-100' : 'opacity-0'
           }`} 
           onClick={handleClose} 
@@ -69,8 +69,8 @@ const ProductDrawer = ({ product, warehouses, onClose, onUpdate }: ProductDrawer
         {/* Drawer panel with slide animation */}
         <section className="absolute inset-y-0 right-0 pl-1 sm:pl-10 max-w-full flex">
           <div 
-            className={`relative w-screen max-w-lg sm:max-w-xl transform transition-transform duration-300 ease-in-out ${
-              isVisible ? 'translate-x-0' : 'translate-x-full'
+            className={`relative w-screen max-w-lg sm:max-w-xl transform transition-all duration-400 ease-out ${
+              isVisible ? 'translate-x-0 scale-100' : 'translate-x-full scale-95'
             }`}
           >
             <div 

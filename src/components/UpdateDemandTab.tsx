@@ -84,7 +84,7 @@ const UpdateDemandTab = ({ product, onUpdate, onTabChange }: UpdateDemandTabProp
             className={`mt-1 block w-full border rounded-md px-3 py-2 bg-white dark:bg-brand-navy text-brand-grayText dark:text-brand-grayLight focus:outline-none transition-colors ${
               validationError 
                 ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
-                : 'border-brand-grayMid dark:border-brand-navy/60 focus:ring-brand-blue focus:border-brand-blue'
+                : 'border-brand-grayMid dark:border-brand-grayLight/30 focus:ring-brand-blue focus:border-brand-blue'
             }`}
             required
             aria-invalid={validationError ? 'true' : 'false'}
