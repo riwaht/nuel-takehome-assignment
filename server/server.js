@@ -1,6 +1,5 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import cors from 'cors';
 
 // GraphQL Schema
 const typeDefs = `
@@ -166,13 +165,12 @@ const server = new ApolloServer({
   resolvers,
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 // Start the server using the standalone server
 const { url } = await startStandaloneServer(server, {
   listen: { port: PORT },
-  context: async ({ req }) => {
-    // Add CORS headers
+  context: async () => {
     return {};
   },
 });

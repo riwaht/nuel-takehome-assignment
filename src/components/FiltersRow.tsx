@@ -1,6 +1,17 @@
 import { Search, Warehouse, Filter } from 'lucide-react';
+import { ChangeEvent, useState, useEffect, useCallback } from 'react';
+import { Filters, Warehouse as WarehouseType } from '../types';
 
-const FiltersRow = ({ filters, warehouses, onFilterChange, loading }) => {
+interface FiltersRowProps {
+  filters: Filters;
+  warehouses: WarehouseType[];
+  onFilterChange: (filters: Partial<Filters>) => void;
+  loading: boolean;
+}
+
+const FiltersRow = ({ filters, warehouses, onFilterChange, loading }: FiltersRowProps): JSX.Element => {
+  const [localSearch, setLocalSearch] = useState<string>(filters.search);
+  
   const statusOptions = [
     { value: 'all', label: 'All Status' },
     { value: 'healthy', label: '🟢 Healthy' },
@@ -8,15 +19,31 @@ const FiltersRow = ({ filters, warehouses, onFilterChange, loading }) => {
     { value: 'critical', label: '🔴 Critical' }
   ];
 
-  const handleSearchChange = (e) => {
-    onFilterChange({ search: e.target.value });
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearch !== filters.search) {
+        onFilterChange({ search: localSearch });
+      }
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(timeoutId);
+  }, [localSearch, onFilterChange, filters.search]);
+
+  // Sync local search with external filters
+  useEffect(() => {
+    setLocalSearch(filters.search);
+  }, [filters.search]);
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setLocalSearch(e.target.value);
   };
 
-  const handleWarehouseChange = (e) => {
+  const handleWarehouseChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     onFilterChange({ warehouse: e.target.value });
   };
 
-  const handleStatusChange = (e) => {
+  const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     onFilterChange({ status: e.target.value });
   };
 
@@ -31,12 +58,16 @@ const FiltersRow = ({ filters, warehouses, onFilterChange, loading }) => {
         {/* Search Box */}
         <div className="relative group">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400 group-focus-within:text-brand-500 transition-colors duration-200" />
+            {loading && localSearch !== filters.search ? (
+              <div className="h-4 w-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Search className="h-5 w-5 text-gray-400 group-focus-within:text-brand-500 transition-colors duration-200" />
+            )}
           </div>
           <input
             type="text"
             placeholder="Search by name, SKU, or ID..."
-            value={filters.search}
+            value={localSearch}
             onChange={handleSearchChange}
             className="input-field pl-11 py-3 text-sm bg-gray-50/50 hover:bg-white focus:bg-white transition-colors duration-200"
           />

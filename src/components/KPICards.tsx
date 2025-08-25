@@ -1,6 +1,12 @@
 import { TrendingUp, Package, Target } from 'lucide-react';
+import { Product } from '../types';
 
-const KPICards = ({ products, loading }) => {
+interface KPICardsProps {
+  products: Product[];
+  loading: boolean;
+}
+
+const KPICards = ({ products, loading }: KPICardsProps): JSX.Element => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

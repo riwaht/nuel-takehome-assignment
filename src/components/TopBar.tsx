@@ -1,8 +1,13 @@
 import { Calendar, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-const TopBar = ({ selectedRange, onRangeChange }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+interface TopBarProps {
+  selectedRange: string;
+  onRangeChange: (range: string) => void;
+}
+
+const TopBar = ({ selectedRange, onRangeChange }: TopBarProps): JSX.Element => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   
   const ranges = [
     { value: '7d', label: '7 days' },
@@ -12,7 +17,7 @@ const TopBar = ({ selectedRange, onRangeChange }) => {
 
   const selectedRangeLabel = ranges.find(r => r.value === selectedRange)?.label || '7 days';
 
-  const handleRangeSelect = (value) => {
+  const handleRangeSelect = (value: string): void => {
     onRangeChange(value);
     setIsDropdownOpen(false);
   };

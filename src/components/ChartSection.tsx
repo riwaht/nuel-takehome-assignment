@@ -1,6 +1,12 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { KPI } from '../types';
 
-const ChartSection = ({ kpis, loading }) => {
+interface ChartSectionProps {
+  kpis: KPI[];
+  loading: boolean;
+}
+
+const ChartSection = ({ kpis, loading }: ChartSectionProps): JSX.Element => {
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">

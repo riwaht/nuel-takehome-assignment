@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS, GET_WAREHOUSES, GET_KPIS } from './apollo/client';
 import TopBar from './components/TopBar';
@@ -7,16 +7,18 @@ import ChartSection from './components/ChartSection';
 import FiltersRow from './components/FiltersRow';
 import ProductsTable from './components/ProductsTable';
 import ProductDrawer from './components/ProductDrawer';
+import { Product, Warehouse, KPI, Filters } from './types';
 
-function App() {
-  const [selectedRange, setSelectedRange] = useState('7d');
-  const [filters, setFilters] = useState({
+function App(): JSX.Element {
+  const [selectedRange, setSelectedRange] = useState<string>('7d');
+  const [filters, setFilters] = useState<Filters>({
     search: '',
     warehouse: 'all',
     status: 'all'
   });
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [previousFilters, setPreviousFilters] = useState<Filters>(filters);
 
   // GraphQL Queries
   const { data: productsData, loading: productsLoading, error: productsError, refetch: refetchProducts } = useQuery(GET_PRODUCTS, {
@@ -33,22 +35,31 @@ function App() {
     variables: { range: selectedRange }
   });
 
-  const handleFilterChange = (newFilters) => {
+  // Reset pagination only when filters change and data is loaded
+  useEffect(() => {
+    const filtersChanged = JSON.stringify(filters) !== JSON.stringify(previousFilters);
+    if (filtersChanged && !productsLoading) {
+      setCurrentPage(1);
+      setPreviousFilters(filters);
+    }
+  }, [filters, previousFilters, productsLoading]);
+
+  const handleFilterChange = (newFilters: Partial<Filters>): void => {
     setFilters(prev => ({ ...prev, ...newFilters }));
-    setCurrentPage(1); // Reset to first page when filters change
+    // Don't reset page immediately - let the effect handle it smoothly
   };
 
-  const handleProductSelect = (product) => {
+  const handleProductSelect = (product: Product): void => {
     setSelectedProduct(product);
   };
 
-  const handleProductUpdate = () => {
+  const handleProductUpdate = (): void => {
     refetchProducts(); // Refresh products data after mutation
   };
 
-  const products = productsData?.products || [];
-  const warehouses = warehousesData?.warehouses || [];
-  const kpis = kpisData?.kpis || [];
+  const products: Product[] = productsData?.products || [];
+  const warehouses: Warehouse[] = warehousesData?.warehouses || [];
+  const kpis: KPI[] = kpisData?.kpis || [];
 
   // Calculate paginated products
   const itemsPerPage = 10;

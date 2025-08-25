@@ -1,0 +1,35 @@
+export interface Product {
+  id: string;
+  name: string;
+  sku: string;
+  warehouse: string;
+  stock: number;
+  demand: number;
+}
+
+export interface Warehouse {
+  code: string;
+  name: string;
+  city: string;
+  country: string;
+}
+
+export interface KPI {
+  date: string;
+  stock: number;
+  demand: number;
+}
+
+export interface Filters {
+  search: string;
+  warehouse: string;
+  status: string;
+}
+
+export interface StatusInfo {
+  status: string;
+  label: string;
+  color: string;
+  bg?: string;
+  rowColor?: string;
+}
