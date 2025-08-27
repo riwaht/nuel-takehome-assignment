@@ -5,9 +5,10 @@ interface ProductRowProps {
   product: Product;
   onProductSelect: (product: Product) => void;
   index: number;
+  isVirtualized?: boolean;
 }
 
-const ProductRow = ({ product, onProductSelect, index }: ProductRowProps): JSX.Element => {
+const ProductRow = ({ product, onProductSelect, index, isVirtualized = false }: ProductRowProps): JSX.Element => {
   // Stable click handler
   const handleClick = useCallback(() => {
     onProductSelect(product);
@@ -56,23 +57,16 @@ const ProductRow = ({ product, onProductSelect, index }: ProductRowProps): JSX.E
       ? 'bg-white dark:bg-brand-navy' 
       : 'bg-brand-grayLight/20 dark:bg-brand-navy/40';
 
-  return (
-    <tr
-      key={product.id}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      role="button"
-      aria-label={`View details for ${product.name}`}
-      className={`${alternatingBg} ${statusInfo.rowColor} hover:bg-brand-grayLight/50 dark:hover:bg-brand-grayLight/10 focus:bg-brand-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-inset cursor-pointer transition-colors duration-200 border-b border-brand-grayMid/20 dark:border-brand-grayLight/10`}
-    >
+  // Define the cell content for reuse
+  const cellContent = (
+    <>
       <td className="px-6 py-4 whitespace-nowrap">
         <div>
           <div className="text-sm font-medium text-brand-grayText dark:text-brand-grayLight">{product.name}</div>
           <div className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">{product.id}</div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap w-32">
+      <td className="px-6 py-4 whitespace-nowrap">
         <div 
           className="text-sm text-brand-grayText dark:text-brand-grayLight truncate"
           title={product.sku}
@@ -80,7 +74,7 @@ const ProductRow = ({ product, onProductSelect, index }: ProductRowProps): JSX.E
           {product.sku}
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap w-24">
+      <td className="px-6 py-4 whitespace-nowrap">
         <div 
           className="text-sm text-brand-grayText dark:text-brand-grayLight truncate"
           title={product.warehouse}
@@ -106,6 +100,30 @@ const ProductRow = ({ product, onProductSelect, index }: ProductRowProps): JSX.E
           {statusInfo.label}
         </span>
       </td>
+    </>
+  );
+
+  // For virtualized table, return cells without event handlers (parent handles those)
+  if (isVirtualized) {
+    return (
+      <>
+        {cellContent}
+      </>
+    );
+  }
+
+  // For regular table, return the full row
+  return (
+    <tr
+      key={product.id}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`View details for ${product.name}`}
+      className={`${alternatingBg} ${statusInfo.rowColor} hover:bg-brand-grayLight/50 dark:hover:bg-brand-grayLight/10 focus:bg-brand-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-inset cursor-pointer transition-colors duration-200 border-b border-brand-grayMid/20 dark:border-brand-grayLight/10`}
+    >
+      {cellContent}
     </tr>
   );
 };

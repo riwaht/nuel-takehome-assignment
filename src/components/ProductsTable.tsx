@@ -13,6 +13,8 @@ interface ProductsTableProps {
   onPageChange: (page: number) => void;
   onProductSelect: (product: Product) => void;
   totalCount?: number;
+  useVirtualization: boolean;
+  onToggleVirtualization: () => void;
 }
 
 const ProductsTable = ({ 
@@ -22,7 +24,9 @@ const ProductsTable = ({
   totalPages, 
   onPageChange, 
   onProductSelect,
-  totalCount = 0
+  totalCount = 0,
+  useVirtualization,
+  onToggleVirtualization
 }: ProductsTableProps): JSX.Element => {
   // Only show full skeleton for initial load - when we have no data at all
   const shouldShowSkeleton = loading && products.length === 0 && totalCount === 0;
@@ -35,9 +39,29 @@ const ProductsTable = ({
     <div className="bg-white dark:bg-brand-navy rounded-2xl shadow-lg border border-brand-grayMid/30 dark:border-brand-navy/50 overflow-hidden transition-all duration-300">
       {/* Table Header */}
       <div className="px-8 py-6 border-b border-brand-grayMid/30 dark:border-brand-grayLight/20 bg-gradient-to-r from-brand-grayLight dark:from-brand-navy/80 to-white dark:to-brand-navy">
-        <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
-          Products Inventory
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-xl font-bold text-brand-grayText dark:text-brand-grayLight">
+            Products Inventory
+            <span className="ml-2 text-sm font-normal text-blue-600 dark:text-blue-400">
+              Regular
+            </span>
+          </h3>
+          
+          {/* Table Mode Toggle */}
+          <div className="flex items-center gap-3 bg-brand-grayLight/50 dark:bg-brand-navy/60 px-3 py-2 rounded-lg border border-brand-grayMid/30 dark:border-brand-grayLight/20">
+            <span className="text-sm font-medium text-brand-grayText dark:text-brand-grayLight">Mode:</span>
+            <button
+              onClick={onToggleVirtualization}
+              className="relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-300 bg-blue-500 hover:bg-blue-600"
+              title="Switch to virtual scrolling for better performance"
+            >
+              <span className="sr-only">Toggle virtual scrolling</span>
+              <span className="inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform duration-300 translate-x-1" />
+            </button>
+            <span className="text-sm font-medium text-blue-600 dark:text-blue-400 w-16">Regular</span>
+          </div>
+        </div>
+        
         <div className="flex items-center justify-between">
           <p className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
             {totalCount > 0 ? `${(currentPage - 1) * 10 + 1}-${Math.min(currentPage * 10, totalCount)} of ${totalCount}` : '0'} items
