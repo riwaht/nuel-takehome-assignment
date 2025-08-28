@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS, GET_WAREHOUSES, GET_KPIS } from '../apollo/client';
 import TopBar from './TopBar';
 import KPICards from './KPICards';
+import PredictiveInsights from './PredictiveInsights';
 import ChartSection from './ChartSection';
 import StockHeatmap from './StockHeatmap';
 import QuickActionsToolbar from './QuickActionsToolbar';
@@ -203,53 +204,76 @@ const Dashboard = (): JSX.Element => {
         onRangeChange={handleRangeChange} 
       />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <div className="text-center mb-6 sm:mb-8 px-2">
-          <h1 className="text-2xl sm:text-3xl font-bold text-brand-grayText dark:text-brand-grayLight mb-2">
-            Daily Inventory Dashboard
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Compact Header */}
+        <div className="text-center mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-brand-grayText dark:text-brand-grayLight mb-1">
+            Supply Chain Dashboard
           </h1>
-          <p className="text-base sm:text-lg text-brand-grayText/80 dark:text-brand-grayLight/80 max-w-2xl mx-auto">
-            Monitor stock levels, demand forecasting, and warehouse operations
+          <p className="text-sm text-brand-grayText/70 dark:text-brand-grayLight/70">
+            Real-time inventory monitoring and forecasting
           </p>
         </div>
 
-        <KPICards 
-          products={products} 
-          loading={productsLoading || kpisLoading} 
-        />
-        
-        <ChartSection 
-          kpis={kpis} 
-          loading={kpisLoading} 
-        />
-        
-        <StockHeatmap
-          products={products}
-          warehouses={warehouses}
-          loading={productsLoading || warehousesLoading}
-          onCellClick={onHeatmapCellClick}
-        />
-        
-        <div className="space-y-6">
-                        <FiltersRow
-                search={rawSearch}
-                warehouse={warehouse}
-                status={status}
-                warehouses={warehouses}
-                onSearchChange={onSearchChange}
-                onWarehouseChange={onWarehouseChange}
-                onStatusChange={onStatusChange}
-                loading={warehousesLoading}
-              />
+        {/* Row 1: KPI Cards - Full Width */}
+        <div className="mb-6">
+          <KPICards 
+            products={products} 
+            loading={productsLoading || kpisLoading} 
+          />
+        </div>
+
+        {/* Row 2: Chart Section - Full Width */}
+        <div className="mb-6">
+          <ChartSection 
+            kpis={kpis} 
+            loading={kpisLoading} 
+          />
+        </div>
+
+        {/* Row 3: Two Column Layout - Analytics & Heatmap */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 items-stretch">
+          <div className="h-full">
+            <PredictiveInsights
+              products={products}
+              warehouses={warehouses}
+              loading={productsLoading || warehousesLoading}
+            />
+          </div>
           
-          {/* Conditional Table Rendering */}
+          <div className="h-full">
+            <StockHeatmap
+              products={products}
+              warehouses={warehouses}
+              loading={productsLoading || warehousesLoading}
+              onCellClick={onHeatmapCellClick}
+            />
+          </div>
+        </div>
+
+        {/* Row 4: Search & Filters - Full Width */}
+        <div className="mb-4">
+          <FiltersRow
+            search={rawSearch}
+            warehouse={warehouse}
+            status={status}
+            warehouses={warehouses}
+            onSearchChange={onSearchChange}
+            onWarehouseChange={onWarehouseChange}
+            onStatusChange={onStatusChange}
+            loading={warehousesLoading}
+          />
+        </div>
+
+        {/* Row 5: Products Table - Full Width */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
           {useVirtualization ? (
             <VirtualizedProductsTable
               products={products}
               loading={productsLoading}
               onProductSelect={handleProductSelect}
               totalCount={totalCount}
-              height={600}
+              height={500}
               useVirtualization={useVirtualization}
               onToggleVirtualization={toggleVirtualization}
             />

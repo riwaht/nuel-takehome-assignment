@@ -44,18 +44,23 @@ const TopBar = ({ selectedRange, onRangeChange }: TopBarProps): JSX.Element => {
           
           <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <Calendar className="h-5 w-5 text-brand-blue dark:text-brand-gold hidden sm:block" />
+            {/* Date Range Selector */}
+            <div className="hidden sm:flex items-center space-x-2">
+              <span className="text-xs font-medium text-brand-grayText/70 dark:text-brand-grayLight/70 uppercase tracking-wide">
+                Time Range
+              </span>
+            </div>
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-brand-grayLight to-white dark:from-brand-navy dark:to-brand-navy/80 rounded-xl border border-brand-grayMid dark:border-brand-navy/60 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2 dark:focus:ring-offset-brand-navy"
+                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-brand-blue/10 to-brand-blue/5 dark:from-brand-gold/10 dark:to-brand-gold/5 rounded-xl border border-brand-blue/20 dark:border-brand-gold/20 shadow-sm hover:shadow-md hover:bg-gradient-to-r hover:from-brand-blue/20 hover:to-brand-blue/10 dark:hover:from-brand-gold/20 dark:hover:to-brand-gold/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2 dark:focus:ring-offset-brand-navy group"
               >
-                <Calendar className="h-4 w-4 text-brand-blue dark:text-brand-gold sm:hidden" />
-                <span className="text-sm font-semibold text-brand-grayText dark:text-brand-grayLight whitespace-nowrap">
+                <Calendar className="h-4 w-4 text-brand-blue dark:text-brand-gold group-hover:scale-110 transition-transform duration-200" />
+                <span className="text-sm font-semibold text-brand-blue dark:text-brand-gold whitespace-nowrap">
                   {selectedRangeLabel}
                 </span>
                 <ChevronDown 
-                  className={`h-4 w-4 text-brand-grayText dark:text-brand-grayLight transition-transform duration-200 ${
+                  className={`h-4 w-4 text-brand-blue dark:text-brand-gold transition-all duration-200 group-hover:scale-110 ${
                     isDropdownOpen ? 'rotate-180' : ''
                   }`} 
                 />
@@ -71,19 +76,22 @@ const TopBar = ({ selectedRange, onRangeChange }: TopBarProps): JSX.Element => {
                   />
                   
                   {/* Dropdown Content */}
-                  <div className="dropdown">
+                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-brand-navy rounded-xl shadow-lg border border-brand-blue/20 dark:border-brand-gold/20 overflow-hidden z-50">
                     <div className="py-1">
                       {ranges.map((range) => (
                         <button
                           key={range.value}
                           onClick={() => handleRangeSelect(range.value)}
-                          className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors duration-200 flex items-center justify-between ${
+                          className={`w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-between group ${
                             selectedRange === range.value
-                              ? 'bg-brand-blue/10 dark:bg-brand-gold/10 text-brand-navy dark:text-brand-gold border-r-2 border-brand-blue dark:border-brand-gold'
-                              : 'text-brand-grayText dark:text-brand-grayLight hover:bg-brand-grayLight/50 dark:hover:bg-brand-navy/50'
+                              ? 'bg-brand-blue/15 dark:bg-brand-gold/15 text-brand-blue dark:text-brand-gold border-r-2 border-brand-blue dark:border-brand-gold'
+                              : 'text-brand-grayText dark:text-brand-grayLight hover:bg-brand-blue/5 dark:hover:bg-brand-gold/5 hover:text-brand-blue dark:hover:text-brand-gold'
                           }`}
                         >
-                          <span>{range.label}</span>
+                          <div className="flex items-center space-x-2">
+                            <Calendar className="h-3 w-3 opacity-60" />
+                            <span>{range.label}</span>
+                          </div>
                           {selectedRange === range.value && (
                             <div className="w-2 h-2 rounded-full bg-brand-blue dark:bg-brand-gold"></div>
                           )}
