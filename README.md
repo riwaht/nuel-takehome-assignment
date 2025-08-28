@@ -1,18 +1,35 @@
 # SupplySight Dashboard
 
-A modern inventory management dashboard built for supply chain professionals. Track stock levels, monitor demand patterns, and manage warehouse operations in real time.
+An advanced AI-powered inventory management dashboard built for supply chain professionals. Features predictive analytics, interactive visualizations, and comprehensive warehouse management tools.
 
-## Features
+## ✨ Core Features
 
-- Real-time KPIs: Total Stock, Demand, and Fill Rate calculations  
-- Interactive Charts: Stock vs demand trends with date range selection  
-- Filtering: Search with clear button, warehouse and status filtering  
-- Responsive: Optimized for phones, tablets, and desktop  
-- Live Updates: Modify demand or transfer stock with immediate UI updates  
-- Modern Design: Clean interface with drawer animations and dark mode support  
-- Accessibility: Keyboard navigation, focus trapping, and ARIA labels  
-- Notifications: Toast messages for errors and success states  
-- Enhanced Tables: Alternating rows, critical item highlighting, and tooltips for long text  
+### 📊 Real-Time Analytics
+- **Smart KPIs**: Total Stock, Demand, and Fill Rate with live calculations  
+- **Interactive Charts**: Stock vs demand trends with 7/14/30-day range selection  
+- **Advanced Filtering**: Search with autocomplete, warehouse and status filtering  
+
+### 🔮 AI-Powered Predictions
+- **Predictive Insights**: Stock-out forecasting with confidence scoring
+- **Business Intelligence**: Critical alerts, reorder suggestions, and optimization opportunities
+- **Risk Assessment**: Automated urgency classification and timeline predictions
+
+### 🗺️ Visual Management
+- **Stock Heatmap**: Interactive warehouse visualization with click-to-filter
+- **Color-Coded Health**: Instant visual status across all locations
+- **Performance Metrics**: Warehouse efficiency scoring and comparison
+
+### ⚡ Enhanced Interactions
+- **Draggable Toolbar**: Floating action buttons with smart positioning
+- **Virtualized Tables**: High-performance scrolling for large datasets
+- **Smart Tooltips**: Dynamic positioning prevents screen overflow
+- **Responsive Design**: Optimized for phones, tablets, and desktop
+
+### 🔧 Professional Tools
+- **Live Updates**: Modify demand or transfer stock with immediate UI updates  
+- **Data Export**: CSV/JSON export with warehouse context
+- **Bulk Operations**: Multi-product transfers and batch updates
+- **Modern UX**: Clean interface with animations, dark mode, and accessibility features
 
 ## Quick Start
 
@@ -48,13 +65,23 @@ A modern inventory management dashboard built for supply chain professionals. Tr
    - Frontend: http://localhost:5173  
    - GraphQL Playground: http://localhost:4000  
 
-## How to Use
+## 🚀 How to Use
 
-1. View KPIs at the top of the dashboard  
-2. Analyze stock vs demand trends with date range selection  
-3. Filter products by name, SKU, warehouse, or status  
-4. Click a product row to update demand or transfer stock  
-5. Use on mobile or desktop—the layout adapts automatically  
+### Dashboard Navigation
+1. **KPI Overview**: View total stock, demand, and fill rate at the top
+2. **Trend Analysis**: Select 7/14/30-day ranges to analyze stock vs demand patterns
+3. **Predictive Insights**: Review AI recommendations in the left analytics panel
+4. **Warehouse Heatmap**: Click any colored cell to filter by warehouse location
+
+### Advanced Interactions
+5. **Smart Search**: Use the search bar with real-time filtering by name, SKU, or ID
+6. **Quick Actions**: Drag the floating blue button anywhere on screen for quick tools
+7. **Product Management**: Click any product row for detailed management options
+8. **Data Export**: Use the floating toolbar to export filtered data as CSV or JSON
+
+### Performance Features
+9. **Large Datasets**: Toggle virtualized scrolling for 500+ products
+10. **Mobile Optimized**: Full functionality on phones, tablets, and desktop
 
 ## Available Commands
 
@@ -78,13 +105,29 @@ A modern inventory management dashboard built for supply chain professionals. Tr
 
 The project includes sample products and warehouses to demonstrate functionality. Inventory levels include healthy, low, and critical states.
 
-## Architecture
+## 🏗️ Architecture
 
-- Frontend: React 19, Vite, Tailwind CSS  
-- Backend: Apollo Server, GraphQL, Express  
-- Data: In-memory store with realistic seed data  
-- Charts: Recharts  
-- Icons: Lucide React  
+### Frontend Stack
+- **React 19** + **Vite** for blazing fast development
+- **TypeScript** for type safety and better DX
+- **Tailwind CSS 3.4** for utility-first styling
+- **Apollo Client** for GraphQL state management
+
+### Backend Services  
+- **Apollo Server** with GraphQL schema
+- **Express.js** server with CORS support
+- **In-memory data store** with realistic supply chain data
+
+### UI Libraries
+- **Recharts** for interactive analytics charts
+- **Lucide React** for consistent iconography  
+- **Custom Components** for specialized supply chain UX
+
+### Advanced Features
+- **Predictive Analytics Engine** with confidence scoring
+- **Virtual Scrolling** for large dataset performance
+- **Drag & Drop Interface** with collision detection
+- **Real-time Calculations** with optimized memoization
 
 ## Deployment Notes
 
