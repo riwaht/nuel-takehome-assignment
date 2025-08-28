@@ -1,46 +1,47 @@
 # SupplySight Dashboard – Development Notes
 
 ## Overview  
-Inventory management dashboard built with **React, Tailwind, and GraphQL**. Includes KPI tracking, predictive analytics, interactive visualizations, and mobile-ready design.
+Built a React + Tailwind + GraphQL dashboard for inventory management. Focused on KPIs, predictive analytics, visualizations, and responsive design.
 
-## Frontend  
-- **React + Vite** for speed, **Tailwind 3.4** for styling  
-- **Recharts** for stock/demand trends  
-- **Key Features**:  
-  - Predictive stock-out alerts with confidence scoring  
-  - Warehouse heatmap with click-to-filter  
-  - QuickActions floating toolbar (export, bulk ops, presets)  
-  - Virtualized tables for large datasets  
-- **UX**: responsive, sticky filters, color-coded status, accessible drawer, toasts, dark mode, keyboard navigation
+### Frontend  
+React with Vite for fast iteration and Tailwind 3.4 for styling (4.x had PostCSS issues). Recharts powers the stock vs demand trends.  
+The layout follows a vertical flow: KPIs, chart, filters, then a product table. Enhancements include predictive stock-out alerts, a warehouse heatmap, a floating QuickActions toolbar, and virtualized tables for large datasets.  
+UX refinements: sticky filters, color-coded statuses, an accessible drawer, toast notifications, dark mode, and keyboard navigation.
 
-## Backend  
-- **Apollo Server (mock)** + **Apollo Client 3.10**  
-- In-memory resolvers for filtering, KPIs, mutations  
-- **Business Logic**: Fill Rate, status (Healthy/Low/Critical), optimistic UI updates  
-- **Note**: Demand values assumed monthly; disclaimer added. Production fix = `demandPeriod` field or historical data
+### Backend  
+A mock Apollo Server provides GraphQL queries and mutations. Apollo Client 3.10 handles caching and optimistic updates (4.x had import issues).  
+Business rules:  
+- Fill rate = (Σ min(stock, demand) / Σ demand) × 100  
+- Status logic: Healthy, Low, or Critical  
+Demand values were ambiguous, so I assumed monthly demand and added a disclaimer. A production system would include a `demandPeriod` field or historical data.
 
-## Challenges & Fixes  
-- Tailwind 4.x incompatibility → downgraded  
-- Apollo 4.x import issues → stayed on 3.10  
-- Mobile drawer issues → custom breakpoints  
-- Demand ambiguity → explicit monthly assumption + user disclaimer  
+### Challenges and Fixes  
+- Tailwind 4.x and Apollo 4.x caused compatibility issues → downgraded both  
+- Mobile drawer broke layouts → fixed with custom breakpoints  
+- Demand ambiguity → documented assumption and surfaced it to users  
 
-## Performance  
-- Virtualized scrolling + pagination  
-- Apollo caching with optimistic responses  
-- Debounced search (250ms)  
-- React.memo, useMemo/useCallback, skeleton loading states  
-- Planned: code splitting, WebSocket sync  
+### Performance  
+Virtualized scrolling handles 500+ rows smoothly. Apollo caching with `previousData` avoids flicker. A 250ms debounce on search reduces extra queries. Skeleton loaders prevent layout shifts. Memoization (`useMemo`, `useCallback`) keeps renders efficient.  
+Future work: code splitting, WebSocket sync, service worker caching.
 
-## Advanced Features  
-- **Predictive Engine**: days-until-empty, overstock detection, alert thresholds  
-- **Stock Heatmap**: warehouse health (Critical/Low/Healthy/Excellent)  
-- **QuickActions Toolbar**: draggable, adaptive layout, smart tooltips  
-- **Layout**: vertical flow, balanced grid, aligned panels  
+### Advanced Features  
+- Predictive engine for days-until-empty and overstock alerts  
+- Heatmap showing warehouse health with click-to-filter  
+- QuickActions toolbar with draggable, adaptive layout and bulk actions  
+- Grid layout aligning analytics and tables consistently  
 
-## Future Improvements  
-- **What-If Sandbox**: clone data, test spikes or transfers  
-- **Scenario Planner**: save and switch between demand/supply cases  
-- **Warehouse Scopes**: RBAC limiting users to specific sites  
-- **Health Rules Engine**: custom thresholds via JSON logic/CEL  
-- **Audit & Rollback**: ledger-based history with point-in-time views  
+### Production Gaps  
+Prototype works, but production would require:  
+- Security: JWT auth with RBAC, MFA, GraphQL query limits  
+- Database: PostgreSQL schema with ACID transactions, migrations, backups  
+- Infrastructure: Docker/Kubernetes, CI/CD, health checks, IaC configs  
+- Monitoring: structured logs, metrics, alerts, error boundaries  
+- Testing: unit, integration, E2E, contract tests, accessibility checks  
+- Compliance: GDPR handling, audit trails, ERP/WMS integration  
+
+### Future Improvements  
+- What-if sandbox for simulating demand spikes or transfers  
+- Scenario planner to save and compare different supply/demand cases  
+- Warehouse scopes for restricted role-based access  
+- Health rules engine for configurable thresholds  
+- Audit and rollback with append-only ledger and point-in-time queries  
