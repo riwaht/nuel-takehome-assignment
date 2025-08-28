@@ -20,6 +20,10 @@ interface PredictiveInsightsProps {
 }
 
 const PredictiveInsights = ({ products, warehouses, loading }: PredictiveInsightsProps) => {
+  // Configuration for demand period assumptions
+  const DEMAND_PERIOD_ASSUMPTION = 'monthly'; // Make assumption explicit
+  const DAYS_IN_PERIOD = 30; // Make conversion factor clear
+  
   // Advanced predictive analysis
   const insights = useMemo(() => {
     if (loading || products.length === 0) return [];
@@ -27,12 +31,12 @@ const PredictiveInsights = ({ products, warehouses, loading }: PredictiveInsight
     const insights: PredictiveInsight[] = [];
 
     products.forEach((product) => {
-      const dailyDemand = product.demand / 30; // Assume demand is monthly
+      const dailyDemand = product.demand / DAYS_IN_PERIOD; // Convert assumed monthly demand to daily
       const daysUntilStockOut = dailyDemand > 0 ? Math.floor(product.stock / dailyDemand) : Infinity;
       
       // Calculate warehouse performance context
       const warehouseProducts = products.filter(p => p.warehouse === product.warehouse);
-      const warehouseStockOut = warehouseProducts.filter(p => p.stock < (p.demand / 30) * 7).length;
+      const warehouseStockOut = warehouseProducts.filter(p => p.stock < (p.demand / DAYS_IN_PERIOD) * 7).length;
       const warehouseEfficiency = 1 - (warehouseStockOut / warehouseProducts.length);
       
       // Critical stock-out prediction
@@ -43,7 +47,7 @@ const PredictiveInsights = ({ products, warehouses, loading }: PredictiveInsight
           type: 'critical',
           priority: 10 - daysUntilStockOut,
           daysUntilStockOut,
-          recommendedAction: `Order ${Math.ceil(dailyDemand * 30)} units immediately`,
+          recommendedAction: `Order ${Math.ceil(dailyDemand * DAYS_IN_PERIOD)} units immediately`,
           potentialImpact: `Risk of ${Math.round(product.demand * 0.3)} unit sales loss`,
           confidence: Math.min(95, 70 + (7 - daysUntilStockOut) * 5)
         });
@@ -57,7 +61,7 @@ const PredictiveInsights = ({ products, warehouses, loading }: PredictiveInsight
           type: 'warning',
           priority: 5,
           daysUntilStockOut,
-          recommendedAction: `Plan reorder of ${Math.ceil(dailyDemand * 45)} units`,
+          recommendedAction: `Plan reorder of ${Math.ceil(dailyDemand * (DAYS_IN_PERIOD * 1.5))} units`,
           potentialImpact: `Potential stockout risk in ${daysUntilStockOut} days`,
           confidence: Math.round((Math.min(85, 60 + Math.random() * 15)) * 100) / 100
         });
@@ -95,7 +99,7 @@ const PredictiveInsights = ({ products, warehouses, loading }: PredictiveInsight
       critical,
       warnings,
       opportunities,
-      totalAtRisk: products.filter(p => p.stock < (p.demand / 30) * 7).length,
+      totalAtRisk: products.filter(p => p.stock < (p.demand / DAYS_IN_PERIOD) * 7).length,
       avgConfidence: insights.length > 0 
         ? insights.reduce((sum, i) => sum + i.confidence, 0) / insights.length
         : 0
@@ -255,11 +259,14 @@ const PredictiveInsights = ({ products, warehouses, loading }: PredictiveInsight
         )}
       </div>
 
-      {/* Compact Footer */}
+      {/* Compact Footer with Disclaimer */}
       <div className="mt-3 pt-3 border-t border-indigo-200 dark:border-indigo-800">
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
           <span>Real-time analysis</span>
           <span>Stock & demand patterns</span>
+        </div>
+        <div className="text-xs text-gray-400 dark:text-gray-500 italic">
+          * Predictions assume demand figures represent {DEMAND_PERIOD_ASSUMPTION} rates
         </div>
       </div>
     </div>
